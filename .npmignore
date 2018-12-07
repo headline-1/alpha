@@ -1,0 +1,12 @@
+node_modules/
+reports/
+dist/*.map
+src/
+types/
+.*
+tsconfig.json
+jest.config.json
+tslint.json
+webpack.config.js
+yarn.lock
+*.log
