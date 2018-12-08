@@ -1,16 +1,14 @@
 import { get } from 'lodash';
+import * as path from 'path';
+import { readDir } from './utils/file';
 
 export interface Config {
   commands: string[];
 }
 
-const CONFIG_LOCATIONS = [
-  '.butler.json',
-  'butler.js',
-  'package.json:butler',
-];
-const SUPPORTED_CONFIG_EXTENSIONS = [
-  '.js', '.json',
+const CONFIG_LOCATIONS: ([RegExp, string?])[] = [
+  [/^\.?[a@]?(?:lpha)?\.js(?:on)?$/],
+  [/^package\.json$/, '@'],
 ];
 
 const sanitizeConfig = (config: Partial<Config>): Config => config ? ({
@@ -18,18 +16,20 @@ const sanitizeConfig = (config: Partial<Config>): Config => config ? ({
   ...config,
 }) : undefined;
 
-const readConfigFile = async (location: string): Promise<Config | undefined> => {
-  const [file, key] = location.split(':');
+const readConfigFile = async ([file, key]: [RegExp | string, string?]): Promise<Config | undefined> => {
   if (!file) {
     throw new Error('Config file has no location specified.');
   }
-  const extension = file.slice(file.lastIndexOf('.'));
-  if (SUPPORTED_CONFIG_EXTENSIONS.indexOf(extension) < 0) {
-    throw new Error('Config file has unsupported extension.');
+  const directory = path.resolve('.');
+  const files = await readDir(directory);
+  const fileName = files.find(f => typeof file === 'string' ? file === f : file.test(f));
+  if (!fileName) {
+    return undefined;
   }
-  if (file.endsWith('.js') || file.endsWith('.json')) {
+  const filePath = path.join(directory, fileName);
+  if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
     try {
-      const configFile = require(file);
+      const configFile = require(filePath);
       return sanitizeConfig(key ? get(configFile, key) : configFile);
     } catch (error) {
       // If there's an error loading file, just return undefined; otherwise rethrow error
@@ -44,7 +44,7 @@ const readConfigFile = async (location: string): Promise<Config | undefined> => 
 
 export const getConfig = async (configLocation?: string): Promise<Config> => {
   if (configLocation) {
-    return readConfigFile(configLocation);
+    return readConfigFile(configLocation.split(':') as [string, string?]);
   }
   for (const location of CONFIG_LOCATIONS) {
     const config = readConfigFile(location);
@@ -52,5 +52,5 @@ export const getConfig = async (configLocation?: string): Promise<Config> => {
       return config;
     }
   }
-  throw new Error('Butler configuration wasn\'t found in current project.');
+  throw new Error('@lpha configuration wasn\'t found in current project.');
 };

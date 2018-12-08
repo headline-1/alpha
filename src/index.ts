@@ -5,15 +5,15 @@ import * as path from 'path';
 import { runCommand } from './command';
 import { getConfig } from './config';
 import { getCommandsFromModule } from './get-commands';
+import { AlphaError } from './utils/alpha-error';
 import { parseArgs } from './utils/args';
-import { ButlerError } from './utils/butler-error';
 import { generateDoc } from './utils/docs';
 import { writeFile } from './utils/file';
 
 export * from './command';
 export * from './parameters';
 export * from './types';
-export * from './utils/butler-error';
+export * from './utils/alpha-error';
 export * from './utils/execute';
 export * from './utils/file';
 export * from './utils/sleep';
@@ -51,7 +51,7 @@ const run = async () => {
           environment: process.env,
         });
       } catch (error) {
-        if (error instanceof ButlerError) {
+        if (error instanceof AlphaError) {
           console.log(chalk.red(chalk.bold(error.command) + ': ' + error.message));
           if (error.details) {
             console.log(chalk.bold.magenta('details:\n') + JSON.stringify(error.details));
@@ -70,6 +70,6 @@ run()
     process.exit(0);
   })
   .catch((err) => {
-    console.error('An error occurred while running Native Butler.\n', err);
+    console.error('An error occurred while running @lpha.\n', err);
     process.exit(1);
   });
