@@ -3,7 +3,7 @@ import { Type } from '../type';
 export const BooleanType: Type<boolean> = {
   name: 'boolean',
   description: 'A boolean value.',
-  convert: (value: any) => {
+  convert: async (value: any) => {
     const b = typeof value === 'boolean'
       ? value
       : typeof value === 'number'

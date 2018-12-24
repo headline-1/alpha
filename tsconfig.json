@@ -1,25 +1,27 @@
 {
   "compilerOptions": {
-    "outDir": "./build",
-    "module": "es2015",
-    "target": "es2017",
+    "sourceRoot": "src",
+    "rootDir": ".",
+    "outDir": "dist",
+    "module": "esnext",
+    "target": "es6",
+    "lib": ["esnext"],
+    "declaration": true,
     "moduleResolution": "node",
-    "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "preserveConstEnums": true,
-    "allowJs": true,
     "sourceMap": true,
+    "strict": true,
     "noImplicitReturns": true,
     "noUnusedParameters": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "./types/*.d.ts",
     "./src/**/*.ts",
-    "./src/**/*.js",
     "./src/**/*.json"
   ]
 }

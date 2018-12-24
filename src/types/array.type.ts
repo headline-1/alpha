@@ -12,20 +12,20 @@ export function ArrayType<T>(...itemTypes: Type<T>[]): Type<T[]> {
       ? itemTypes[0].name + '[]'
       : `(${itemTypes.map(t => t.name).join(' | ')})[]`,
     description: `An array containing: ${itemTypes.map(t => t.description).join(', ')}`,
-    convert: (value: any) => {
+    convert: async (value: any) => {
       if (typeof value === 'string') {
         value = value.split(',');
       }
       if (!Array.isArray(value)) {
         throw new Error(`Expected to receive an array or a string resembling an array, got ${value}`);
       }
-      const result = [];
+      const result: T[] = [];
       for (const t of value) {
         let value;
         const errors = [];
         for (const type of itemTypes) {
           try {
-            value = type.convert(t);
+            value = await type.convert(t);
           } catch (error) {
             errors.push(error);
           }

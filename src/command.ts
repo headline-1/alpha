@@ -46,7 +46,7 @@ export class CommandBuilder<Parameters extends Record<string, any>> {
 }
 
 type CommandParameters = {
-  environment: Record<string, string>;
+  environment: Record<string, string | undefined>;
   cliArguments: Record<string, string>;
   configuration: Record<string, any>;
 };

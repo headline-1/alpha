@@ -43,10 +43,11 @@ const run = async () => {
       if (!command) {
         console.log('Command unsupported, please use one of: ' + commands.map(cmd => cmd.name).join(', '));
         process.exit(1);
+        return;
       }
       try {
         return await runCommand(command, {
-          configuration: config[commandName],
+          configuration: config[command.name] || {},
           cliArguments: parseArgs(process.argv),
           environment: process.env,
         });

@@ -3,6 +3,7 @@
 /.vscode/
 /build/
 /dist/
+/src/**/*.js
 /yarn-error.log
 /reports/
 /.jest

@@ -14,7 +14,7 @@ export class ParametersBuilder<Parameters extends Record<string, Input> = {}> {
 
   add<Name extends string, In extends Input>(name: Name, input: In): ParametersBuilder<Parameters
     & {[name in Name]: In}> {
-    this.parameters[name] = input;
+    (this.parameters as any)[name] = input;
     return this as any;
   }
 

@@ -3,10 +3,17 @@
     "^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
     "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
   },
-  "testRegex": "/src/.*\\.(test|spec)\\.ts$",
+  "testMatch": [
+    "<rootDir>/src/**/*.spec.ts"
+  ],
   "testPathIgnorePatterns": [
     "<rootDir>/node_modules/",
     "<rootDir>/lib/"
+  ],
+  "watchPathIgnorePatterns": [
+    "<rootDir>/.jest/",
+    "<rootDir>/node_modules/",
+    "<rootDir>/reports/"
   ],
   "moduleFileExtensions": [
     "ts",
@@ -17,7 +24,7 @@
     "./src/spec/setup.ts"
   ],
   "collectCoverageFrom": [
-    "src/**/*.{ts}"
+    "<rootDir>/src/**/*.ts"
   ],
   "coverageDirectory": "reports/coverage",
   "coverageReporters": ["json", "lcov"],

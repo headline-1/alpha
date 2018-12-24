@@ -12,7 +12,7 @@ export function MapType(...itemTypes: Type<any>[]): Type<Record<string, any>> {
       ? `Map<string, ${itemTypes[0].name}>`
       : `Map<string, ${itemTypes.map(t => t.name).join(' | ')}>`,
     description: `A map containing: ${itemTypes.map(t => t.description).join(', ')}`,
-    convert: (object: any) => {
+    convert: async (object: any) => {
       const result: Record<string, any> = {} as any;
       for (const key in object) {
         if (!object.hasOwnProperty(key)) {
@@ -23,7 +23,7 @@ export function MapType(...itemTypes: Type<any>[]): Type<Record<string, any>> {
         const errors = [];
         for (const type of itemTypes) {
           try {
-            value = type.convert(rawValue);
+            value = await type.convert(rawValue);
           } catch (error) {
             errors.push(error);
           }

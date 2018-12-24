@@ -11,7 +11,7 @@ export const ObjectType = <O extends Record<string, Type<any>>>(obj: O): Type<{
   description: `An object containing:\n${Object.entries(obj).map(([key, type]) => (
     `${key} - ${type.description}`
   )).join(',\n')}`,
-  convert: (value: any) => {
+  convert: async (value: any) => {
     if (typeof value !== 'object') {
       throw new Error(`Expected an object, got ${value}`);
     }
@@ -19,7 +19,7 @@ export const ObjectType = <O extends Record<string, Type<any>>>(obj: O): Type<{
     const result = {} as any;
     for (const [key, type] of typeEntries) {
       try {
-        result[key] = type.convert(value[key]);
+        result[key] = await type.convert(value[key]);
       } catch (error) {
         throw new Error(`Expected to match type for object's key '${key}', but failed: ${error.message}`);
       }

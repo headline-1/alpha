@@ -8,9 +8,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "yarn lint && webpack --config=webpack.config.js",
-    "clean": "rimraf {dist,.jest,report}",
-    "lint": "mkdir -p reports && tslint './src/**/*.{js,ts}' --project ./ --format json --out './reports/lint.json' || tslint './src/**/*.{js,ts}' --project ./ --format stylish",
+    "build": "yarn lint && tsc",
+    "clean": "rm -rf {dist,.jest,reports}",
+    "lint": "mkdir -p reports && tslint './src/**/*.ts' --project ./ --format json --out './reports/lint.json' || tslint './src/**/*.ts' --project ./ --format stylish",
     "start": "node dist/index.js",
     "test": "jest --config='./jest.config.json' --json --outputFile='./reports/test.json' --testLocationInResults --coverage --detectOpenHandles",
     "prepare": "yarn build"
@@ -22,36 +22,19 @@
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
-    "@types/jest": "^23.3.0",
-    "@types/lodash": "^4.14.118",
-    "@types/mkdirp": "^0.5.2",
+    "@types/glob": "^7.1.1",
+    "@types/jest": "^23.3.10",
+    "@types/lodash": "^4.14.119",
     "@types/node": "^10.5.2",
-    "@types/request": "^2.47.1",
-    "@types/rimraf": "^2.0.2",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-jest": "^23.4.0",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
-    "eslint": "^5.2.0",
-    "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "jest": "^23.4.1",
-    "ts-jest": "^23.0.1",
-    "ts-loader": "^4.4.2",
-    "tslint": "^5.11.0",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.0",
     "tslint-config-airbnb-base": "^0.2.0",
-    "typescript": "^3.1.6",
-    "webpack": "^4.16.1",
-    "webpack-cli": "^3.1.0"
+    "typescript": "^3.2.2"
   },
   "dependencies": {
     "chalk": "^2.4.1",
-    "cpx": "^1.5.0",
     "glob": "^7.1.2",
-    "lodash": "^4.17.11",
-    "rimraf": "^2.6.2",
-    "source-map-support": "^0.5.6",
-    "webpack-node-externals": "^1.7.2"
+    "source-map-support": "^0.5.6"
   }
 }

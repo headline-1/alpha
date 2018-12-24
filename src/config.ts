@@ -4,6 +4,8 @@ import { readDir } from './utils/file';
 
 export interface Config {
   commands: string[];
+
+  [commandName: string]: Record<string, any>;
 }
 
 const CONFIG_LOCATIONS: ([RegExp, string?])[] = [
@@ -11,12 +13,12 @@ const CONFIG_LOCATIONS: ([RegExp, string?])[] = [
   [/^package\.json$/, '@'],
 ];
 
-const sanitizeConfig = (config: Partial<Config>): Config => config ? ({
+export const sanitizeConfig = (config: Partial<Config> | undefined): Config | undefined => config ? ({
   commands: [],
   ...config,
 }) : undefined;
 
-const readConfigFile = async ([file, key]: [RegExp | string, string?]): Promise<Config | undefined> => {
+export const readConfigFile = async ([file, key]: [RegExp | string, string?]): Promise<Config | undefined> => {
   if (!file) {
     throw new Error('Config file has no location specified.');
   }
@@ -44,10 +46,14 @@ const readConfigFile = async ([file, key]: [RegExp | string, string?]): Promise<
 
 export const getConfig = async (configLocation?: string): Promise<Config> => {
   if (configLocation) {
-    return readConfigFile(configLocation.split(':') as [string, string?]);
+    const config = await readConfigFile(configLocation.split(':') as [string, string?]);
+    if (config) {
+      return config;
+    }
+    throw new Error(`@lpha configuration does not exist at specified path "${configLocation}"`);
   }
   for (const location of CONFIG_LOCATIONS) {
-    const config = readConfigFile(location);
+    const config = await readConfigFile(location);
     if (config) {
       return config;
     }
