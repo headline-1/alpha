@@ -3,7 +3,7 @@ import { AnyCommand, AnyParameters } from '../command';
 /**
  * Creates a string containing a standard markdown document that describes passed command..
  */
-export const generateDoc = <T extends AnyParameters>(command: AnyCommand<T>): string => {
+export const generateDoc = <T extends AnyParameters, R>(command: AnyCommand<T, R>): string => {
   const parameters = Object.entries(command.parameters);
   const types = Object.values(command.parameters).map(input => input.type);
 

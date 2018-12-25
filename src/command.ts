@@ -1,23 +1,30 @@
 import { Input } from './parameters';
 import { ActualType } from './type';
 
-type CommandExec<Parameters extends Record<string, Input>> = (
-  input: { [d in keyof Parameters]: ActualType<Parameters[d]['type']> }) => Promise<void>;
+type CommandExec<Parameters extends AnyParameters, Result> = (
+  input: { [d in keyof Parameters]: ActualType<Parameters[d]['type']> }) => Promise<CommandResult<Result>>;
 
-export interface Command<Parameters extends Record<string, Input>> {
+export interface Command<Parameters extends AnyParameters, Result> {
   __command: true;
   name: string;
+  location?: string;
   syntax: string;
   description: string;
   parameters: Parameters;
-  exec: CommandExec<Parameters>;
+  dependencies: string[];
+  exec: CommandExec<Parameters, Result>;
+}
+
+export interface CommandResult<T> {
+  result: T;
+  revert: () => Promise<void>;
 }
 
 export type AnyParameters = Record<string, Input<any>>;
-export type AnyCommand<T extends AnyParameters> = Command<T>;
+export type AnyCommand<Params extends AnyParameters, Result> = Command<Params, Result>;
 
-export class CommandBuilder<Parameters extends AnyParameters = {}> {
-  private command: Partial<Command<Parameters>> = {
+export class CommandBuilder<Parameters extends AnyParameters = {}, Result = void> {
+  private command: Partial<Command<Parameters, Result>> = {
     __command: true,
   };
 
@@ -31,21 +38,29 @@ export class CommandBuilder<Parameters extends AnyParameters = {}> {
     return this;
   };
 
+  dependencies = (dependencies: string[]): this => {
+    this.command.dependencies = dependencies;
+    return this;
+  };
+
   parameters = <InputParameters extends Record<string, Input<any>>>(
     parameters: InputParameters
-  ): CommandBuilder<InputParameters> => {
+  ): CommandBuilder<InputParameters, Result> => {
     this.command.parameters = parameters as any;
     return this as any;
   };
 
-  execute = (exec: CommandExec<Parameters>): this => {
-    this.command.exec = exec;
-    return this;
+  execute = <ExecResult>(exec: CommandExec<Parameters, ExecResult>): CommandBuilder<Parameters, ExecResult> => {
+    this.command.exec = exec as any;
+    return this as any;
   };
 
-  build = (): Command<Parameters> => {
+  build = (): Command<Parameters, Result> => {
     if (!this.command.parameters) {
       this.parameters({});
+    }
+    if (!this.command.dependencies) {
+      this.dependencies([]);
     }
     return this.command as any;
   };
@@ -57,8 +72,8 @@ type CommandParameters = {
   configuration: Record<string, any>;
 };
 
-export const runCommand = async <Parameters extends Record<string, Input>>(
-  command: Command<Parameters>,
+export const runCommand = async <Parameters extends AnyParameters, Result>(
+  command: Command<Parameters, Result>,
   { environment, cliArguments, configuration }: CommandParameters
 ) => {
   const parameters: Record<keyof Parameters, any> = {} as any;
@@ -88,5 +103,5 @@ export const runCommand = async <Parameters extends Record<string, Input>>(
   await command.exec(parameters);
 };
 
-export const isCommand = (maybeCommand: any): maybeCommand is AnyCommand<any> =>
+export const isCommand = (maybeCommand: any): maybeCommand is AnyCommand<any, any> =>
   maybeCommand && maybeCommand.__command === true;

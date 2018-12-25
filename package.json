@@ -1,6 +1,6 @@
 {
   "name": "@lpha/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple utility for running tasks in JS projects.",
   "main": "run.js",
   "repository": "git@github.com:headline-1/alpha.git",

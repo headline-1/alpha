@@ -1,14 +1,6 @@
 import 'source-map-support/register';
 
-import chalk from 'chalk';
-import * as path from 'path';
-import { runCommand } from './command';
-import { getConfig } from './config';
-import { getCommandsFromModule } from './get-commands';
-import { AlphaError } from './utils/alpha-error';
-import { parseArgs } from './utils/args';
-import { generateDoc } from './utils/docs';
-import { writeFile } from './utils/file';
+import { alpha } from './alpha';
 
 export * from './command';
 export * from './parameters';
@@ -18,55 +10,7 @@ export * from './utils/execute';
 export * from './utils/file';
 export * from './utils/sleep';
 
-const run = async () => {
-  const config = await getConfig();
-  const commands = config.commands.map(getCommandsFromModule).reduce((all, commands) => all.concat(commands), []);
-  const command = process.argv[2];
-  if (!command) {
-    console.log('Please specify command to execute. Supported commands: ' +
-      commands.map(cmd => cmd.name).join(', ')
-    );
-    process.exit(1);
-  }
-  const commandParams = command.split(':');
-  const commandName = commandParams.shift();
-
-  switch (commandName) {
-    case 'docs':
-      for (const command of commands) {
-        const doc = generateDoc(command);
-        await writeFile(path.join('./docs/commands', command.name + '.md'), doc);
-      }
-      break;
-    default: {
-      const command = commands.find(command => command.name === commandName);
-      if (!command) {
-        console.log('Command unsupported, please use one of: ' + commands.map(cmd => cmd.name).join(', '));
-        process.exit(1);
-        return;
-      }
-      try {
-        return await runCommand(command, {
-          configuration: config[command.name] || {},
-          cliArguments: parseArgs(process.argv),
-          environment: process.env,
-        });
-      } catch (error) {
-        if (error instanceof AlphaError) {
-          console.log(chalk.red(chalk.bold(error.command) + ': ' + error.message));
-          if (error.details) {
-            console.log(chalk.bold.magenta('details:\n') + JSON.stringify(error.details));
-          }
-          process.exit(1);
-        } else {
-          throw error;
-        }
-      }
-    }
-  }
-};
-
-run()
+alpha()
   .then(() => {
     process.exit(0);
   })
