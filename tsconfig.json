@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "preserveConstEnums": true,
-    "sourceMap": true,
+    "inlineSourceMap": true,
     "strict": true,
     "noImplicitReturns": true,
     "noUnusedParameters": true,

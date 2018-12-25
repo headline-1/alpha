@@ -1,6 +1,5 @@
-import { get } from 'lodash';
 import * as path from 'path';
-import { readDir } from './utils/file';
+import { exists, readDir, readFile } from './utils/file';
 
 export interface Config {
   commands: string[];
@@ -13,47 +12,57 @@ const CONFIG_LOCATIONS: ([RegExp, string?])[] = [
   [/^package\.json$/, '@'],
 ];
 
-export const sanitizeConfig = (config: Partial<Config> | undefined): Config | undefined => config ? ({
-  commands: [],
-  ...config,
-}) : undefined;
+export const sanitizeConfig = (object: any | undefined, key?: string): Config | undefined => {
+  if (!object || (key && !object[key])) {
+    return undefined;
+  }
+  const config = key ? object[key] : object;
+  return {
+    commands: [],
+    ...config,
+  };
+};
 
-export const readConfigFile = async ([file, key]: [RegExp | string, string?]): Promise<Config | undefined> => {
+export const readConfigFile = async (file: RegExp | string): Promise<object | undefined> => {
   if (!file) {
     throw new Error('Config file has no location specified.');
   }
-  const directory = path.resolve('.');
-  const files = await readDir(directory);
-  const fileName = files.find(f => typeof file === 'string' ? file === f : file.test(f));
-  if (!fileName) {
+  if (typeof file === 'string') {
+    file = path.resolve(file);
+  } else {
+    const directory = path.resolve('.');
+    const files = await readDir(directory);
+    const fileName = files.find(f => (file as RegExp).test(f));
+    if (!fileName) {
+      return undefined;
+    }
+    file = path.join(directory, fileName);
+  }
+  if (!(await exists(file))) {
     return undefined;
   }
-  const filePath = path.join(directory, fileName);
-  if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
-    try {
-      const configFile = require(filePath);
-      return sanitizeConfig(key ? get(configFile, key) : configFile);
-    } catch (error) {
-      // If there's an error loading file, just return undefined; otherwise rethrow error
-      if (error.code === 'MODULE_NOT_FOUND') {
-        return undefined;
-      }
-      throw error;
-    }
+  switch (path.extname(file)) {
+    case '.json':
+      return JSON.parse(await readFile(file));
+    case '.js':
+      // tslint:disable-next-line
+      return eval(await readFile(file));
+    default:
+      return undefined;
   }
-  return undefined;
 };
 
 export const getConfig = async (configLocation?: string): Promise<Config> => {
   if (configLocation) {
-    const config = await readConfigFile(configLocation.split(':') as [string, string?]);
+    const [path, key] = configLocation.split(':') as [string, string?];
+    const config = sanitizeConfig(await readConfigFile(path), key);
     if (config) {
       return config;
     }
     throw new Error(`@lpha configuration does not exist at specified path "${configLocation}"`);
   }
-  for (const location of CONFIG_LOCATIONS) {
-    const config = await readConfigFile(location);
+  for (const [path, key] of CONFIG_LOCATIONS) {
+    const config = sanitizeConfig(await readConfigFile(path), key);
     if (config) {
       return config;
     }

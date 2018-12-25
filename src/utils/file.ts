@@ -1,9 +1,8 @@
 import * as fs from 'fs';
-import globCallback from 'glob';
+import { Glob } from 'glob';
 import * as Path from 'path';
 import { promisify } from 'util';
 
-console.log(fs);
 const rename = promisify(fs.rename);
 const read = promisify(fs.readFile);
 const write = promisify(fs.writeFile);
@@ -13,7 +12,7 @@ const mkdir = promisify(fs.mkdir);
 export const stat = promisify(fs.stat);
 export const readDir = promisify(fs.readdir);
 export const exists = promisify(fs.exists);
-export const glob = promisify(globCallback);
+export const glob = promisify(Glob);
 
 export const readFile = (file: string, format = 'utf8') => read(file, format);
 

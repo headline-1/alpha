@@ -1,11 +1,11 @@
 import { AnyCommand, isCommand } from './command';
 
-export const getCommandsFromModule = (location: string): AnyCommand[] => {
+export const getCommandsFromModule = (location: string): AnyCommand<any>[] => {
   const commandModule = require(location);
   if (commandModule.__command === true) {
     return [commandModule];
   }
-  const commands: AnyCommand[] = [];
+  const commands: AnyCommand<any>[] = [];
   for (const maybeCommand of Object.values(commandModule)) {
     if (Array.isArray(maybeCommand) && isCommand(maybeCommand[0].__command)) {
       commands.concat(maybeCommand);

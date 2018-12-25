@@ -13,9 +13,10 @@ export interface Command<Parameters extends Record<string, Input>> {
   exec: CommandExec<Parameters>;
 }
 
-export type AnyCommand = Command<Record<string, Input<any>>>;
+export type AnyParameters = Record<string, Input<any>>;
+export type AnyCommand<T extends AnyParameters> = Command<T>;
 
-export class CommandBuilder<Parameters extends Record<string, any>> {
+export class CommandBuilder<Parameters extends AnyParameters = {}> {
   private command: Partial<Command<Parameters>> = {
     __command: true,
   };
@@ -42,7 +43,12 @@ export class CommandBuilder<Parameters extends Record<string, any>> {
     return this;
   };
 
-  build = (): Command<Parameters> => this.command as any;
+  build = (): Command<Parameters> => {
+    if (!this.command.parameters) {
+      this.parameters({});
+    }
+    return this.command as any;
+  };
 }
 
 type CommandParameters = {
@@ -82,5 +88,5 @@ export const runCommand = async <Parameters extends Record<string, Input>>(
   await command.exec(parameters);
 };
 
-export const isCommand = (maybeCommand: any): maybeCommand is AnyCommand =>
+export const isCommand = (maybeCommand: any): maybeCommand is AnyCommand<any> =>
   maybeCommand && maybeCommand.__command === true;
