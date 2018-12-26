@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "sourceRoot": "src",
-    "rootDir": ".",
-    "outDir": "dist",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "module": "esnext",
     "target": "es6",
     "lib": ["esnext"],

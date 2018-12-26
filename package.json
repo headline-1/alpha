@@ -1,8 +1,9 @@
 {
   "name": "@lpha/core",
-  "version": "0.1.1",
+  "version": "0.1.6",
   "description": "A simple utility for running tasks in JS projects.",
-  "main": "run.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index",
   "repository": "git@github.com:headline-1/alpha.git",
   "author": "Krzysztof Miemiec <krzysztof.miemiec@gmail.com>",
   "license": "MIT",
@@ -13,12 +14,12 @@
     "lint": "mkdir -p reports && tslint './src/**/*.ts' --project ./ --format json --out './reports/lint.json' || tslint './src/**/*.ts' --project ./ --format stylish",
     "start": "node dist/index.js",
     "test": "jest --config='./jest.config.json' --json --outputFile='./reports/test.json' --testLocationInResults --coverage --detectOpenHandles",
-    "prepare": "yarn build"
+    "prepare": "yarn clean && yarn build"
   },
   "bin": {
-    "@": "run.js",
-    "@lpha": "run.js",
-    "alpha": "run.js"
+    "@": "./run.js",
+    "@lpha": "./run.js",
+    "alpha": "./run.js"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
