@@ -1,4 +1,4 @@
-import { isDefined } from './is-defined';
+import { isDefined } from './is-defined.util';
 
 export type Args = Record<string, string>;
 

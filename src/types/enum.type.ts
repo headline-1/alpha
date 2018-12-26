@@ -1,5 +1,5 @@
 import { Type } from '../type';
-import { isDefined } from '../utils/is-defined';
+import { isDefined } from '../utils/is-defined.util';
 
 const getEnumMap = (e: any): Record<string, string | number> => {
   const filteredKeys = Object.values(e)

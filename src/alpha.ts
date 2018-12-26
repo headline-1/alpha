@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as path from 'path';
 import { AnyCommand, runCommand } from './command';
 import { getConfig } from './config';
@@ -6,9 +5,11 @@ import { getCommandsFromModule } from './get-commands';
 import { AlphaError } from './utils/alpha-error';
 import { parseArgs } from './utils/args';
 import { generateDoc } from './utils/docs';
-import { writeFile } from './utils/file';
+import { writeFile } from './utils/file.util';
+import { Logger } from './utils/log.util';
 
 export const alpha = async () => {
+  Logger.add({ log: console.log, useChalk: true });
   const config = await getConfig();
   const commands: AnyCommand<any, any>[] = [];
   for (const commandName of config.commands) {
@@ -16,7 +17,7 @@ export const alpha = async () => {
   }
   const commandName = process.argv[2];
   if (!commandName) {
-    console.log('Please specify command to execute. Supported commands: ' +
+    Logger.log('@lpha', 'Please specify command to execute. Supported commands: ' +
       commands.map(cmd => cmd.name).join(', ')
     );
     process.exit(1);
@@ -32,7 +33,10 @@ export const alpha = async () => {
     default: {
       const command = commands.find(command => command.name === commandName);
       if (!command) {
-        console.log('Command unsupported, please use one of: ' + commands.map(cmd => cmd.name).join(', '));
+        Logger.log(
+          '@lpha',
+          'Command unsupported or not registered, please use one of: ' + commands.map(cmd => cmd.name).join(', ')
+        );
         process.exit(1);
         return;
       }
@@ -44,10 +48,7 @@ export const alpha = async () => {
         });
       } catch (error) {
         if (error instanceof AlphaError) {
-          console.log(chalk.red(chalk.bold(error.command) + ': ' + error.message));
-          if (error.details) {
-            console.log(chalk.bold.magenta('details:\n') + JSON.stringify(error.details));
-          }
+          Logger.error(error.command, error.message, error.details);
           process.exit(1);
         } else {
           throw error;

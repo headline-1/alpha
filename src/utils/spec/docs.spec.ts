@@ -3,7 +3,7 @@ import { CommandBuilder } from '../../command';
 import { ParametersBuilder } from '../../parameters';
 import { StringType } from '../../types';
 import { generateDoc } from '../docs';
-import { readFile } from '../file';
+import { readFile } from '../file.util';
 
 describe('docs', () => {
   describe('#generateDoc', () => {

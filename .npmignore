@@ -10,5 +10,4 @@
 tsconfig.json
 jest.config.json
 tslint.json
-webpack.config.js
 yarn.lock

@@ -1,5 +1,5 @@
 import { getConfig, readConfigFile, sanitizeConfig } from '../config';
-import { makeDir, writeFile } from '../utils/file';
+import { makeDir, writeFile } from '../utils/file.util';
 import { FSMock } from './fs.setup';
 
 describe('config', () => {

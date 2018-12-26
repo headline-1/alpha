@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { exists, readDir, readFile } from './utils/file';
+import { exists, readDir, readFile } from './utils/file.util';
 
 export interface Config {
   commands: string[];

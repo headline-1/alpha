@@ -6,9 +6,9 @@ export * from './command';
 export * from './parameters';
 export * from './types';
 export * from './utils/alpha-error';
-export * from './utils/execute';
-export * from './utils/file';
-export * from './utils/sleep';
+export * from './utils/execute.util';
+export * from './utils/file.util';
+export * from './utils/sleep.util';
 
 alpha()
   .then(() => {

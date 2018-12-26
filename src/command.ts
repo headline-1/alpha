@@ -99,7 +99,6 @@ export const runCommand = async <Parameters extends AnyParameters, Result>(
       parameters[key] = await Promise.resolve(parameter.type.convert(value));
     }
   }
-  console.log(parameters);
   await command.exec(parameters);
 };
 
