@@ -1,4 +1,4 @@
-import { AlphaError } from '../alpha-error';
+import { AlphaError } from '../alpha-error.util';
 
 describe('AlphaError', () => {
   it('constructs an error with details', () => {

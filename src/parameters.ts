@@ -4,7 +4,6 @@ export type Input<T extends any = any> = {
   type: Type<T>;
   env?: string;
   cli?: string;
-  required?: boolean;
   description: string;
   default?: ActualType<Type<T>>;
 };

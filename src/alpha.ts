@@ -2,11 +2,7 @@ import * as path from 'path';
 import { AnyCommand, runCommand } from './command';
 import { getConfig } from './config';
 import { getCommandsFromModule } from './get-commands';
-import { AlphaError } from './utils/alpha-error';
-import { parseArgs } from './utils/args';
-import { generateDoc } from './utils/docs';
-import { writeFile } from './utils/file.util';
-import { Logger } from './utils/log.util';
+import { AlphaError, generateDoc, Logger, parseArgs, writeFile } from './utils';
 
 export const alpha = async () => {
   Logger.add({ log: console.log, useChalk: true });

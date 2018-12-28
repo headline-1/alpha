@@ -1,13 +1,13 @@
 import { ParametersBuilder } from '../parameters';
-import { FloatType, StringType } from '../types';
+import { Types } from '../types';
 
 describe('ParametersBuilder', () => {
   const param1 = {
-    type: StringType,
+    type: Types.string(),
     description: 'Test parameter',
   };
   const param2 = {
-    type: FloatType,
+    type: Types.number(),
     description: 'Test parameter 2',
   };
 

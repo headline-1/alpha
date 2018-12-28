@@ -1,21 +1,27 @@
 import { ActualType, Type } from '../type';
 
-export const ObjectType = <O extends Record<string, Type<any>>>(obj: O): Type<{
+export class ObjectType<O extends Record<string, Type<any>>> extends Type<{
   [key in keyof O]: ActualType<O[key]>
-}> => ({
-  name: `{
+}> {
+  constructor(public readonly obj: O) {
+    super();
+    this.init(
+      `{
   ${Object.entries(obj).map(([key, type]) => (
-    `${key}: ${type.name}`
-  )).join(',\n')}
+        `${key}: ${type.name}`
+      )).join(',\n')}
   }`,
-  description: `An object containing:\n${Object.entries(obj).map(([key, type]) => (
-    `${key} - ${type.description}`
-  )).join(',\n')}`,
-  convert: async (value: any) => {
+      `An object containing:\n${Object.entries(obj).map(([key, type]) => (
+        `${key} - ${type.description}`
+      )).join(',\n')}`
+    );
+  }
+
+  convert = async (value: any) => {
     if (typeof value !== 'object') {
       throw new Error(`Expected an object, got ${value}`);
     }
-    const typeEntries = Object.entries(obj);
+    const typeEntries = Object.entries(this.obj);
     const result = {} as any;
     for (const [key, type] of typeEntries) {
       try {
@@ -25,5 +31,7 @@ export const ObjectType = <O extends Record<string, Type<any>>>(obj: O): Type<{
       }
     }
     return result;
-  },
-});
+  };
+}
+
+export const objectType = <O extends Record<string, Type<any>>>(obj: O) => new ObjectType(obj);

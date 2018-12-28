@@ -26,7 +26,7 @@ export const generateDoc = <T extends AnyParameters, R>(command: AnyCommand<T, R
       <td>${value.cli || '-'}</td>
       <td>${value.env || '-'}</td>
       <td>${value.type.name}</td>
-      <td>${!value.default && value.required ? 'yes' : 'no'}</td>
+      <td>${!value.default && !value.type.optional ? 'yes' : 'no'}</td>
       <td><pre>${value.default || '-'}</pre></td>
       <td>${value.description.replace(/\\n/g, '<br />')}</td>
     </tr>`).join('')

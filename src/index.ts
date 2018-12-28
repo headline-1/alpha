@@ -5,10 +5,7 @@ import { alpha } from './alpha';
 export * from './command';
 export * from './parameters';
 export * from './types';
-export * from './utils/alpha-error';
-export * from './utils/execute.util';
-export * from './utils/file.util';
-export * from './utils/sleep.util';
+export * from './utils';
 
 alpha()
   .then(() => {

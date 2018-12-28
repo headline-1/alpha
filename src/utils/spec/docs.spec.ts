@@ -1,8 +1,8 @@
 import * as path from 'path';
 import { CommandBuilder } from '../../command';
 import { ParametersBuilder } from '../../parameters';
-import { StringType } from '../../types';
-import { generateDoc } from '../docs';
+import { Types } from '../../types';
+import { generateDoc } from '../docs.util';
 import { readFile } from '../file.util';
 
 describe('docs', () => {
@@ -10,7 +10,7 @@ describe('docs', () => {
     it('generates documentation for a complete command', async () => {
       const parameters = new ParametersBuilder()
         .add('parameter1', {
-          type: StringType,
+          type: Types.string(),
           description: 'parameter1 description',
           default: '1',
         })

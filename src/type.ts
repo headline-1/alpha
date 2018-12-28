@@ -1,7 +1,25 @@
-export interface Type<T> {
-  name: string;
-  description: string;
-  convert: (value: any) => Promise<T>;
+export abstract class Type<T> {
+  public name: string = 'Type not initialized';
+  public description: string = 'Type not initialized';
+  public optional: boolean = false;
+
+  protected init(name: string | (() => string), description: string | (() => string)) {
+    Object.defineProperty(this, 'name', typeof name === 'string'
+      ? { configurable: false, writable: false, value: name }
+      : { configurable: false, get: name }
+    );
+    Object.defineProperty(this, 'description', typeof description === 'string'
+      ? { configurable: false, writable: false, value: description }
+      : { configurable: false, get: description }
+    );
+  }
+
+  public abstract convert(value: any): Promise<T>;
+
+  public setOptional(optional?: boolean) {
+    this.optional = optional === undefined ? true : optional;
+    return this;
+  }
 }
 
 type UnpackedPromise<T> = T extends Promise<infer U> ? U : T;

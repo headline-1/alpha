@@ -1,4 +1,4 @@
-import { parseArgs } from '../args';
+import { parseArgs } from '../args.util';
 
 describe('args', () => {
   describe('#parseArgs', () => {

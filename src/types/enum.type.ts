@@ -14,24 +14,33 @@ const getEnumMap = (e: any): Record<string, string | number> => {
   }, {} as Record<string, string | number>);
 };
 
-// @TODO fix typings - enums are too special to work properly this way
-export function EnumType<E extends any>(e: E): Type<E[keyof E]> {
-  const enumMap = getEnumMap(e);
-  const enumKeys = Object.keys(enumMap);
-  const enumValues = Object.values(enumMap);
-  return {
-    name: `enum("${enumKeys.join('", "')}")`,
-    description: `Text value matching one of: "${enumKeys.join('", "')}".`,
-    convert: async (rawValue: any): Promise<E[keyof E]> => {
-      const key = rawValue.toString();
-      const value = e[key];
-      if (enumValues.indexOf(key) >= 0) {
-        return key;
-      }
-      if (value !== undefined) {
-        return value;
-      }
-      throw new Error(`Expected one of: "${enumKeys.join('", "')}", got ${value}`);
-    },
+export class EnumType<E extends any> extends Type<E[keyof E]> {
+  private readonly enumValues: (string | number)[];
+  private readonly enumKeys: (string)[];
+
+  constructor(private readonly e: E) {
+    super();
+    const enumMap = getEnumMap(e);
+    this.enumKeys = Object.keys(enumMap);
+    this.enumValues = Object.values(enumMap);
+
+    this.init(
+      `enum("${this.enumKeys.join('", "')}")`,
+      `Text value matching one of: "${this.enumKeys.join('", "')}".`
+    );
+  }
+
+  convert = async (rawValue: any): Promise<E[keyof E]> => {
+    const key = rawValue.toString();
+    const value = this.e[key];
+    if (this.enumValues.indexOf(key) >= 0) {
+      return key;
+    }
+    if (value !== undefined) {
+      return value;
+    }
+    throw new Error(`Expected one of: "${this.enumKeys.join('", "')}", got ${value}`);
   };
 }
+
+export const enumType = <E extends any>(e: E) => new EnumType(e);
