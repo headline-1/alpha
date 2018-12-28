@@ -87,7 +87,7 @@ export const runCommand = async <Parameters extends AnyParameters, Result>(
       || (parameter.cli && cliArguments[parameter.cli])
       || (parameter.env && environment[parameter.env])
       || parameter.default;
-    if (!parameter.type.optional && !value) {
+    if (!parameter.type._optional && !value) {
       throw new Error((
         `${command.name}: Required parameter '${key}' is missing. Expected ${parameter.type.name}.\n` +
         `It can be set in configuration as "${key}"\n` +

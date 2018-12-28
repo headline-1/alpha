@@ -1,7 +1,7 @@
 export abstract class Type<T> {
   public name: string = 'Type not initialized';
   public description: string = 'Type not initialized';
-  public optional: boolean = false;
+  public _optional: boolean = false;
 
   protected init(name: string | (() => string), description: string | (() => string)) {
     Object.defineProperty(this, 'name', typeof name === 'string'
@@ -16,8 +16,8 @@ export abstract class Type<T> {
 
   public abstract convert(value: any): Promise<T>;
 
-  public setOptional(optional?: boolean) {
-    this.optional = optional === undefined ? true : optional;
+  public optional(optional?: boolean) {
+    this._optional = optional === undefined ? true : optional;
     return this;
   }
 }
