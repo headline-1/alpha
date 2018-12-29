@@ -45,3 +45,24 @@ export class CustomType extends Type<string> {
 
 const customType = (magicProperty: string) => Type.create(CustomType, magicProperty);
 ```
+
+## Notes
+
+Base-type methods, like `optional` should usually be called at the very end of parameters chain,
+because TypeScript doesn't allow to pass  higher kinded types (aka "generic generic types"),
+so as a result all generic-modifying methods in base `Type` class by default return `Type<T>`
+instead of the actual type. Something like this:
+
+```typescript
+Types.array() // ArrayType<unknown>
+  .containing(Types.string(), Types.number()) // ArrayType<string|number>
+  .optional() // Type<(string|number)[] | undefined>
+```
+
+To overcome this issue, all of the basic types override these base methods, replacing the result with proper type.
+
+```typescript
+Types.array() // ArrayType<unknown>
+  .containing(Types.string(), Types.number()) // ArrayType<string|number>
+  .optional() // ArrayType<(string|number)[] | undefined>
+```

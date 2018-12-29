@@ -1,11 +1,12 @@
-import { ActualType, Type } from './type';
+import { Type } from 'io-ts';
 
 export type Input<T extends any = any> = {
   type: Type<T>;
   env?: string;
   cli?: string;
   description: string;
-  default?: ActualType<Type<T>>;
+  default?: T;
+  required: boolean;
 };
 
 class ParametersBuilder<Parameters extends Record<string, Input> = {}> {

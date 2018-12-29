@@ -56,9 +56,9 @@ export abstract class Type<T> {
     type._optional = this._optional;
   }
 
-  public optional(optional?: boolean): this {
+  public optional(): Type<T|undefined> {
     return Type.clone(this, (type) => {
-      type._optional = optional === undefined ? true : optional;
+      type._optional = true;
     });
   }
 }

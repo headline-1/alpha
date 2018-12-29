@@ -43,4 +43,4 @@ export class EnumType<E extends any> extends Type<E[keyof E]> {
   }
 }
 
-export const enumType = <E extends any>(e: E) => Type.create(EnumType, e);
+export const enumType = <E extends any>(e: E): EnumType<E> => Type.create(EnumType, e);

@@ -61,6 +61,10 @@ export class MapType<T extends any = unknown> extends Type<Record<string | numbe
     super.copyTo(type);
     type.children = this.children;
   }
+
+  optional(): MapType<Record<string | number, T> | undefined> {
+    return super.optional() as any;
+  }
 }
 
-export const mapType = () => Type.create(MapType);
+export const mapType = (): MapType<unknown> => Type.create(MapType);

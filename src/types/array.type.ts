@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { ActualType, Type } from '../type';
 
-export class ArrayType<T extends any = unknown> extends Type<T[]> {
+export class ArrayType<T extends any[] | unknown = unknown> extends Type<T> {
   private children: Type<T>[] = [];
 
   constructor() {
@@ -28,8 +28,8 @@ export class ArrayType<T extends any = unknown> extends Type<T[]> {
     AT5 = ActualType<T1>,
     AT = AT1 | AT2 | AT3 | AT4 | AT5>(
     c1?: T1, c2?: T2, c3?: T3, c4?: T4, c5?: T5
-  ): ArrayType<unknown extends T ? AT : (T | AT)> {
-    return Type.clone(this, (type: ArrayType<unknown extends T ? AT : (T | AT)>) => {
+  ): ArrayType<unknown extends T ? AT[] : (T[any] | AT)[]> {
+    return Type.clone(this, (type: ArrayType<unknown extends T ? AT[] : (T[any] | AT)[]>) => {
       type.children = [...this.children, c1, c2, c3, c4, c5].filter(Boolean) as Type<any>[];
     });
   }
@@ -39,7 +39,7 @@ export class ArrayType<T extends any = unknown> extends Type<T[]> {
     type.children = this.children;
   }
 
-  async convert(value: any): Promise<T[]> {
+  async convert(value: any): Promise<T> {
     if (typeof value === 'string') {
       value = value.split(',');
     }
@@ -48,9 +48,9 @@ export class ArrayType<T extends any = unknown> extends Type<T[]> {
     }
 
     if (this.children.length) {
-      return cloneDeep(value);
+      return cloneDeep(value) as any;
     }
-    const result: T[] = [];
+    const result: any[] = [];
     for (const t of value) {
       let value;
       const errors = [];
@@ -69,8 +69,12 @@ export class ArrayType<T extends any = unknown> extends Type<T[]> {
       }
       result.push(value);
     }
-    return result;
+    return result as any;
+  }
+
+  optional(): ArrayType<T | undefined> {
+    return super.optional() as any;
   }
 }
 
-export const arrayType = () => Type.create(ArrayType);
+export const arrayType = (): ArrayType<unknown> => Type.create(ArrayType);

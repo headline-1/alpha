@@ -5,7 +5,6 @@ import { AnyCommand, AnyParameters } from '../command';
  */
 export const generateDoc = <T extends AnyParameters, R>(command: AnyCommand<T, R>): string => {
   const parameters = Object.entries(command.parameters);
-  const types = Object.values(command.parameters).map(input => input.type);
 
   const parametersResult = parameters.length ? `
 <h3>Command Parameters</h3>
@@ -26,29 +25,13 @@ export const generateDoc = <T extends AnyParameters, R>(command: AnyCommand<T, R
       <td>${value.cli || '-'}</td>
       <td>${value.env || '-'}</td>
       <td>${value.type.name}</td>
-      <td>${!value.default && !value.type._optional ? 'yes' : 'no'}</td>
+      <td>${!value.default && value.required ? 'yes' : 'no'}</td>
       <td><pre>${value.default || '-'}</pre></td>
       <td>${value.description.replace(/\\n/g, '<br />')}</td>
     </tr>`).join('')
       }
 </table>`
     : '<p>This command has no parameters.</p>';
-
-  const typesResult = types.length ? `
-<h3>Used Types</h3>
-<table>
-  <thead><tr>
-    <td>Type</td>
-    <td>Description</td>
-  </tr></thead>
-  ${types.map(type => `
-    <tr>
-      <td>${type.name}</td>
-      <td>${type.description.replace(/\n/g, '<br />')}
-    </td></tr>`).join('')
-      }
-</table>`
-    : '';
 
   return `
 <h1>${command.name}</h1>
@@ -61,6 +44,5 @@ ${command.description
 </div>
 
 ${parametersResult}
-${typesResult}
 `.replace(/\s{2,}/g, ' ').trim() + '\n';
 };

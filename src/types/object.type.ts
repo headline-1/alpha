@@ -34,4 +34,5 @@ export class ObjectType<O extends Record<string, Type<any>>> extends Type<{
   }
 }
 
-export const objectType = <O extends Record<string, Type<any>>>(obj: O) => Type.create(ObjectType, obj);
+export const objectType = <O extends Record<string, Type<any>>>(obj: O): ObjectType<O> =>
+  Type.create<ObjectType<O>>(ObjectType, obj);

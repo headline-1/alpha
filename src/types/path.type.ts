@@ -21,4 +21,4 @@ export class PathType extends Type<string> {
   }
 }
 
-export const pathType = () => Type.create(PathType);
+export const pathType = (): PathType => Type.create(PathType);

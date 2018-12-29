@@ -38,4 +38,4 @@ export class StringType extends Type<string> {
   }
 }
 
-export const stringType = () => Type.create(StringType);
+export const stringType = (): StringType => Type.create(StringType);

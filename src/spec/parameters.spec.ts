@@ -10,11 +10,16 @@ describe('ParametersBuilder', () => {
     type: Types.number(),
     description: 'Test parameter 2',
   };
+  const param3 = {
+    type: Types.array(),
+    description: 'Array parameter',
+  };
 
   it('adds parameters with #add method', () => {
     const builder = parameters()
       .add('param1', param1)
-      .add('param2', param2);
+      .add('param2', param2)
+      .add('param3', param3);
 
     expect(builder.parameters)
       .toMatchObject({ param1, param2 });

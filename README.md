@@ -1,3 +1,3 @@
 # @lpha
 
-Utility 
+A simple utility for running tasks in JS projects. 

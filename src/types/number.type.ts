@@ -73,4 +73,4 @@ export class NumberType extends Type<number> {
   }
 }
 
-export const numberType = () => new NumberType();
+export const numberType = (): NumberType => new NumberType();

@@ -1,3 +1,5 @@
+import { getDefaultContext } from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Input } from './parameters';
 import { ActualType } from './type';
 
@@ -87,7 +89,7 @@ export const runCommand = async <Parameters extends AnyParameters, Result>(
       || (parameter.cli && cliArguments[parameter.cli])
       || (parameter.env && environment[parameter.env])
       || parameter.default;
-    if (!parameter.type._optional && !value) {
+    if (!parameter.required && !value) {
       throw new Error((
         `${command.name}: Required parameter '${key}' is missing. Expected ${parameter.type.name}.\n` +
         `It can be set in configuration as "${key}"\n` +
@@ -96,7 +98,11 @@ export const runCommand = async <Parameters extends AnyParameters, Result>(
       ).trim());
     }
     if (value) {
-      parameters[key] = await Promise.resolve(parameter.type.convert(value));
+      const validation = parameter.type.validate(value, getDefaultContext(parameter.type));
+      if (validation.isLeft()) {
+        throw new Error(PathReporter.report(validation).join('\n'));
+      }
+      parameters[key] = validation.value;
     }
   }
   await command.exec(parameters);
