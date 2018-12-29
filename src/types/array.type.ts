@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { ActualType, Type } from '../type';
 
-class ArrayType<T extends any = unknown> extends Type<T[]> {
+export class ArrayType<T extends any = unknown> extends Type<T[]> {
   private children: Type<T>[] = [];
 
   constructor() {

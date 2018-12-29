@@ -1,6 +1,6 @@
 import { Type } from '../type';
 
-class BooleanType extends Type<boolean> {
+export class BooleanType extends Type<boolean> {
   constructor() {
     super();
     this.init('boolean', 'A boolean value.');

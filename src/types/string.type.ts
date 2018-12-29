@@ -1,7 +1,7 @@
 import { isNil } from 'lodash';
 import { Type } from '../type';
 
-class StringType extends Type<string> {
+export class StringType extends Type<string> {
   private _regExp?: RegExp;
 
   constructor() {

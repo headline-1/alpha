@@ -3,7 +3,7 @@ import * as path from 'path';
 import { promisify } from 'util';
 import { Type } from '../type';
 
-class PathType extends Type<string> {
+export class PathType extends Type<string> {
   constructor() {
     super();
     this.init(

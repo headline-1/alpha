@@ -14,7 +14,7 @@ const getEnumMap = (e: any): Record<string, string | number> => {
   }, {} as Record<string, string | number>);
 };
 
-class EnumType<E extends any> extends Type<E[keyof E]> {
+export class EnumType<E extends any> extends Type<E[keyof E]> {
   private readonly enumValues: (string | number)[];
   private readonly enumKeys: (string)[];
 

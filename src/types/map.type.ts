@@ -1,6 +1,6 @@
 import { ActualType, Type } from '../type';
 
-class MapType<T extends any = unknown> extends Type<Record<string | number, T>> {
+export class MapType<T extends any = unknown> extends Type<Record<string | number, T>> {
   private children: Type<T>[] = [];
 
   constructor() {

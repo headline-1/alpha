@@ -1,6 +1,6 @@
 import { ActualType, Type } from '../type';
 
-class ObjectType<O extends Record<string, Type<any>>> extends Type<{
+export class ObjectType<O extends Record<string, Type<any>>> extends Type<{
   [key in keyof O]: ActualType<O[key]>
 }> {
   constructor(public readonly obj: O) {

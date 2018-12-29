@@ -19,7 +19,7 @@ Types are used for input verification. They should be only created on app initia
 ```typescript
 import { Type } from '@lpha/core';
 
-class CustomType extends Type<string> {
+export class CustomType extends Type<string> {
   private _noEmpty: boolean = false;
   
   constructor(public readonly magicProperty: string){
