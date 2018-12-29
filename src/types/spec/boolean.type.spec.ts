@@ -32,4 +32,20 @@ describe('boolean.type', () => {
     await expect(type.convert('false')).resolves.toEqual(false);
     await expect(type.convert('true')).resolves.toEqual(true);
   });
+
+  it('is immutable', () => {
+    const type = Types.boolean();
+
+    expect(Object.isFrozen(type)).toBe(true);
+  });
+
+  it('is cloneable', () => {
+    const type = Types.boolean();
+    const clone = type.clone();
+
+    // tslint:disable-next-line
+    expect(new String('abc')).toEqual(new String('abc'));
+    expect(clone).not.toBe(type);
+    expect(clone).toEqual(type);
+  });
 });

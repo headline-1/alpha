@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { CommandBuilder } from '../../command';
-import { ParametersBuilder } from '../../parameters';
+import { parameters } from '../../parameters';
 import { Types } from '../../types';
 import { generateDoc } from '../docs.util';
 import { readFile } from '../file.util';
@@ -8,7 +8,7 @@ import { readFile } from '../file.util';
 describe('docs', () => {
   describe('#generateDoc', () => {
     it('generates documentation for a complete command', async () => {
-      const parameters = new ParametersBuilder()
+      const params = parameters()
         .add('parameter1', {
           type: Types.string(),
           description: 'parameter1 description',
@@ -18,7 +18,7 @@ describe('docs', () => {
       const command = new CommandBuilder()
         .name('command')
         .description('description')
-        .parameters(parameters)
+        .parameters(params)
         .build();
 
       const result = await readFile(path.resolve(__dirname, 'docs.spec.mock.complete.md'));

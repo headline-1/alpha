@@ -8,13 +8,13 @@ describe('string.type', () => {
   });
 
   it('returns regexp name and description', () => {
-    const type = Types.string(/^abc|def$/gi);
+    const type = Types.string().regExp(/^abc|def$/gi);
     expect(type.name).toEqual('string/^abc|def$/gi');
     expect(type.description).toEqual('A string matching /^abc|def$/gi regular expression.');
   });
 
   it('validates regexp', async () => {
-    const type = Types.string(/^abc|def$/gi);
+    const type = Types.string().regExp(/^abc|def$/gi);
     await expect(type.convert('abc')).resolves.toEqual('abc');
     await expect(type.convert('def')).resolves.toEqual('def');
     await expect(type.convert('x')).rejects.toEqual(

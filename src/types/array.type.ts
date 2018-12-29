@@ -1,39 +1,60 @@
-import { Type } from '../type';
+import { cloneDeep } from 'lodash';
+import { ActualType, Type } from '../type';
 
-export class ArrayType<T1,
-  T2 = unknown, T3 = unknown,
-  T4 = unknown, T5 = unknown,
-  T6 = unknown, T7 = unknown,
-  T8 = unknown> extends Type<(T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8)[]> {
-  public readonly children: Type<any>[];
+class ArrayType<T extends any = unknown> extends Type<T[]> {
+  private children: Type<T>[] = [];
 
-  constructor(...children: [
-    Type<T1>, Type<T2>?,
-    Type<T3>?, Type<T4>?,
-    Type<T5>?, Type<T6>?,
-    Type<T7>?, ...Type<T8>[]
-    ]) {
+  constructor() {
     super();
-    this.children = children = children.filter(Boolean) as any;
     this.init(
-      children.length === 1
-        ? children[0].name + '[]'
-        : `(${children.map(t => t!.name).join(' | ')})[]`,
-      `An array containing: ${children.map(t => t!.description).join(', ')}`
+      () => this.children.length === 0
+        ? 'any[]'
+        : this.children.length === 1
+          ? this.children[0].name + '[]'
+          : `(${this.children.map(t => t!.name).join(' | ')})[]`,
+      () => `An array containing: ${this.children.map(t => t!.description).join(', ') || 'any type'}`
     );
   }
 
-  convert = async (value: any) => {
+  containing<T1 extends Type<any>,
+    T2 extends Type<any> | never = never,
+    T3 extends Type<any> | never = never,
+    T4 extends Type<any> | never = never,
+    T5 extends Type<any> | never = never,
+    AT1 = ActualType<T1>,
+    AT2 = ActualType<T1>,
+    AT3 = ActualType<T1>,
+    AT4 = ActualType<T1>,
+    AT5 = ActualType<T1>,
+    AT = AT1 | AT2 | AT3 | AT4 | AT5>(
+    c1?: T1, c2?: T2, c3?: T3, c4?: T4, c5?: T5
+  ): ArrayType<unknown extends T ? AT : (T | AT)> {
+    return Type.clone(this, (type: ArrayType<unknown extends T ? AT : (T | AT)>) => {
+      type.children = [...this.children, c1, c2, c3, c4, c5].filter(Boolean) as Type<any>[];
+    });
+  }
+
+  copyTo(type: this): void {
+    super.copyTo(type);
+    type.children = this.children;
+  }
+
+  async convert(value: any): Promise<T[]> {
     if (typeof value === 'string') {
       value = value.split(',');
     }
     if (!Array.isArray(value)) {
       throw new Error(`Expected to receive an array or a string resembling an array, got ${value}`);
     }
-    const result: (T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8)[] = [];
+
+    if (this.children.length) {
+      return cloneDeep(value);
+    }
+    const result: T[] = [];
     for (const t of value) {
       let value;
       const errors = [];
+
       for (const type of this.children) {
         try {
           value = await type!.convert(t);
@@ -49,16 +70,7 @@ export class ArrayType<T1,
       result.push(value);
     }
     return result;
-  };
+  }
 }
 
-export const arrayType = <T1,
-  T2 = unknown, T3 = unknown,
-  T4 = unknown, T5 = unknown,
-  T6 = unknown, T7 = unknown,
-  T8 = unknown>(...children: [
-  Type<T1>, Type<T2>?,
-  Type<T3>?, Type<T4>?,
-  Type<T5>?, Type<T6>?,
-  Type<T7>?, ...Type<T8>[]
-  ]) => new ArrayType(...children);
+export const arrayType = () => Type.create(ArrayType);

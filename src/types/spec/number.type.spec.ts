@@ -48,8 +48,8 @@ describe('number.type', () => {
     await expect(type.convert(Infinity)).rejects.toEqual(
       new Error('Expected an finite number, got Infinity.')
     );
-    type.infinity();
-    await expect(type.convert(Infinity)).resolves.toEqual(Infinity);
+    const infinityType = type.infinity();
+    await expect(infinityType.convert(Infinity)).resolves.toEqual(Infinity);
   });
 
   it('validates if the input is in specified range', async () => {

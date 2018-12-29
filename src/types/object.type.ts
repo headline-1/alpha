@@ -1,6 +1,6 @@
 import { ActualType, Type } from '../type';
 
-export class ObjectType<O extends Record<string, Type<any>>> extends Type<{
+class ObjectType<O extends Record<string, Type<any>>> extends Type<{
   [key in keyof O]: ActualType<O[key]>
 }> {
   constructor(public readonly obj: O) {
@@ -17,7 +17,7 @@ export class ObjectType<O extends Record<string, Type<any>>> extends Type<{
     );
   }
 
-  convert = async (value: any) => {
+  async convert(value: any): Promise<{ [key in keyof O]: ActualType<O[key]> }> {
     if (typeof value !== 'object') {
       throw new Error(`Expected an object, got ${value}`);
     }
@@ -31,7 +31,7 @@ export class ObjectType<O extends Record<string, Type<any>>> extends Type<{
       }
     }
     return result;
-  };
+  }
 }
 
-export const objectType = <O extends Record<string, Type<any>>>(obj: O) => new ObjectType(obj);
+export const objectType = <O extends Record<string, Type<any>>>(obj: O) => Type.create(ObjectType, obj);

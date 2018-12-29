@@ -1,12 +1,12 @@
 import { Type } from '../type';
 
-export class BooleanType extends Type<boolean> {
+class BooleanType extends Type<boolean> {
   constructor() {
     super();
     this.init('boolean', 'A boolean value.');
   }
 
-  convert = async (value: any) => {
+  async convert(value: any): Promise<boolean> {
     const b = typeof value === 'boolean'
       ? value
       : typeof value === 'number'
@@ -18,7 +18,7 @@ export class BooleanType extends Type<boolean> {
       throw new Error(`Expected a boolean or a value that can be evaluated to boolean, got ${value}.`);
     }
     return b;
-  };
+  }
 }
 
-export const booleanType = () => new BooleanType();
+export const booleanType = (): BooleanType => Type.create(BooleanType);

@@ -1,30 +1,37 @@
-import { Type } from '../type';
+import { ActualType, Type } from '../type';
 
-export class MapType<T1,
-  T2 = unknown, T3 = unknown,
-  T4 = unknown, T5 = unknown,
-  T6 = unknown, T7 = unknown,
-  T8 = unknown> extends Type<Record<string | number, (T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8)>> {
-  private readonly children: Type<any>[];
+class MapType<T extends any = unknown> extends Type<Record<string | number, T>> {
+  private children: Type<T>[] = [];
 
-  constructor(...children: [
-    Type<T1>, Type<T2>?,
-    Type<T3>?, Type<T4>?,
-    Type<T5>?, Type<T6>?,
-    Type<T7>?, ...Type<T8>[]
-    ]) {
+  constructor() {
     super();
-    this.children = children = children.filter(Boolean) as any;
-
     this.init(
-      children.length === 1
-        ? `Map<string, ${children[0].name}>`
-        : `Map<string, ${children.map(t => t!.name).join(' | ')}>`,
-      `A map containing: ${children.map(t => t!.description).join(', ')}`
+      () => this.children.length === 1
+        ? `Map<string, ${this.children[0].name}>`
+        : `Map<string, ${this.children.map(t => t!.name).join(' | ')}>`,
+      () => `A map containing: ${this.children.map(t => t!.description).join(', ')}`
     );
   }
 
-  convert = async (object: any) => {
+  containing<T1 extends Type<any>,
+    T2 extends Type<any> | never = never,
+    T3 extends Type<any> | never = never,
+    T4 extends Type<any> | never = never,
+    T5 extends Type<any> | never = never,
+    AT1 = ActualType<T1>,
+    AT2 = ActualType<T1>,
+    AT3 = ActualType<T1>,
+    AT4 = ActualType<T1>,
+    AT5 = ActualType<T1>,
+    AT = AT1 | AT2 | AT3 | AT4 | AT5>(
+    c1?: T1, c2?: T2, c3?: T3, c4?: T4, c5?: T5
+  ): MapType<unknown extends T ? AT : (T | AT)> {
+    return Type.clone(this, (type: MapType<unknown extends T ? AT : (T | AT)>) => {
+      type.children = [...this.children, c1, c2, c3, c4, c5].filter(Boolean) as Type<any>[];
+    });
+  }
+
+  async convert(object: any) {
     const result: Record<string, any> = {} as any;
     for (const key in object) {
       if (!object.hasOwnProperty(key)) {
@@ -48,16 +55,12 @@ export class MapType<T1,
       result[key] = value;
     }
     return result;
-  };
+  }
+
+  copyTo(type: this): void {
+    super.copyTo(type);
+    type.children = this.children;
+  }
 }
 
-export const mapType = <T1,
-  T2 = unknown, T3 = unknown,
-  T4 = unknown, T5 = unknown,
-  T6 = unknown, T7 = unknown,
-  T8 = unknown>(...children: [
-  Type<T1>, Type<T2>?,
-  Type<T3>?, Type<T4>?,
-  Type<T5>?, Type<T6>?,
-  Type<T7>?, ...Type<T8>[]
-  ]) => new MapType(...children);
+export const mapType = () => Type.create(MapType);

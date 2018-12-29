@@ -9,7 +9,6 @@ export class NumberType extends Type<number> {
 
   constructor() {
     super();
-
     this.init(
       () => (this._integer ? 'integer' : 'number') + this.range,
       () => {
@@ -28,27 +27,23 @@ export class NumberType extends Type<number> {
       : '';
   }
 
-  min = (min: number) => {
-    this._min = min;
-    return this;
-  };
+  min(min: number): NumberType {
+    return Type.clone(this, type => type._min = min);
+  }
 
-  max = (max: number) => {
-    this._max = max;
-    return this;
-  };
+  max(max: number): NumberType {
+    return Type.clone(this, type => type._max = max);
+  }
 
-  integer = () => {
-    this._integer = true;
-    return this;
-  };
+  integer(): NumberType {
+    return Type.clone(this, type => type._integer = true);
+  }
 
-  infinity = () => {
-    this._infinity = true;
-    return this;
-  };
+  infinity(): NumberType {
+    return Type.clone(this, type => type._infinity = true);
+  }
 
-  convert = async (value: any) => {
+  async convert(value: any): Promise<number> {
     const n = typeof value === 'number'
       ? value
       : parseFloat(value);
@@ -67,7 +62,15 @@ export class NumberType extends Type<number> {
       throw new Error(`Expected number to be in range ${this.range}, got ${n}.`);
     }
     return n;
-  };
+  }
+
+  copyTo(type: NumberType) {
+    super.copyTo(type);
+    type._integer = this._integer;
+    type._min = this._min;
+    type._max = this._max;
+    type._infinity = this._infinity;
+  }
 }
 
 export const numberType = () => new NumberType();

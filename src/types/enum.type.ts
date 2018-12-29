@@ -14,7 +14,7 @@ const getEnumMap = (e: any): Record<string, string | number> => {
   }, {} as Record<string, string | number>);
 };
 
-export class EnumType<E extends any> extends Type<E[keyof E]> {
+class EnumType<E extends any> extends Type<E[keyof E]> {
   private readonly enumValues: (string | number)[];
   private readonly enumKeys: (string)[];
 
@@ -30,7 +30,7 @@ export class EnumType<E extends any> extends Type<E[keyof E]> {
     );
   }
 
-  convert = async (rawValue: any): Promise<E[keyof E]> => {
+  async convert(rawValue: any): Promise<E[keyof E]> {
     const key = rawValue.toString();
     const value = this.e[key];
     if (this.enumValues.indexOf(key) >= 0) {
@@ -40,7 +40,7 @@ export class EnumType<E extends any> extends Type<E[keyof E]> {
       return value;
     }
     throw new Error(`Expected one of: "${this.enumKeys.join('", "')}", got ${value}`);
-  };
+  }
 }
 
-export const enumType = <E extends any>(e: E) => new EnumType(e);
+export const enumType = <E extends any>(e: E) => Type.create(EnumType, e);

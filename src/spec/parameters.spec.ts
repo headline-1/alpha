@@ -1,4 +1,4 @@
-import { ParametersBuilder } from '../parameters';
+import { parameters } from '../parameters';
 import { Types } from '../types';
 
 describe('ParametersBuilder', () => {
@@ -12,7 +12,7 @@ describe('ParametersBuilder', () => {
   };
 
   it('adds parameters with #add method', () => {
-    const builder = new ParametersBuilder()
+    const builder = parameters()
       .add('param1', param1)
       .add('param2', param2);
 
@@ -20,7 +20,7 @@ describe('ParametersBuilder', () => {
       .toMatchObject({ param1, param2 });
   });
   it('returns all parameters with #build method', () => {
-    const builder = new ParametersBuilder()
+    const builder = parameters()
       .add('param1', param1)
       .add('param2', param2);
 
