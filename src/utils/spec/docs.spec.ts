@@ -10,7 +10,8 @@ describe('docs', () => {
     it('generates documentation for a complete command', async () => {
       const params = parameters()
         .add('parameter1', {
-          type: Types.string(),
+          type: Types.string,
+          required: true,
           description: 'parameter1 description',
           default: '1',
         })

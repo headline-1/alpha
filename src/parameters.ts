@@ -1,11 +1,11 @@
 import { Type } from 'io-ts';
 
-export type Input<T extends any = any> = {
-  type: Type<T>;
+export type Input<A = any, O = any, I = unknown> = {
+  type: Type<A, O, I>;
   env?: string;
   cli?: string;
   description: string;
-  default?: T;
+  default?: I;
   required: boolean;
 };
 

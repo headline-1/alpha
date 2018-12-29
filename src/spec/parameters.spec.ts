@@ -3,15 +3,18 @@ import { Types } from '../types';
 
 describe('ParametersBuilder', () => {
   const param1 = {
-    type: Types.string(),
+    type: Types.string,
+    required: true,
     description: 'Test parameter',
   };
   const param2 = {
-    type: Types.number(),
+    type: Types.number,
+    required: true,
     description: 'Test parameter 2',
   };
   const param3 = {
-    type: Types.array(),
+    type: Types.array(Types.string),
+    required: true,
     description: 'Array parameter',
   };
 

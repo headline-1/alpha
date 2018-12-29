@@ -1,10 +1,9 @@
-import { getDefaultContext } from 'io-ts';
+import { getDefaultContext, TypeOf } from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Input } from './parameters';
-import { ActualType } from './type';
 
 type CommandExec<Parameters extends AnyParameters, Result> = (
-  input: { [d in keyof Parameters]: ActualType<Parameters[d]['type']> }) => Promise<CommandResult<Result>>;
+  input: { [d in keyof Parameters]: TypeOf<Parameters[d]['type']> }) => Promise<CommandResult<Result>>;
 
 export interface Command<Parameters extends AnyParameters, Result> {
   __command: true;
