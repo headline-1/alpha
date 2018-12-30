@@ -1,4 +1,4 @@
-import { spawn as processSpawn } from 'child_process';
+import { exec as processExec } from 'child_process';
 import { Logger } from './log.util';
 
 interface ExecOptions {
@@ -18,7 +18,7 @@ export const exec = (
     tag = `ProcessExec(${firstWord(command, ' ')})`,
   }: ExecOptions = {}
 ): Promise<string> => new Promise<string>((resolve, reject) => {
-  const child = processSpawn(command, [], { windowsHide: true });
+  const child = processExec(command, { windowsHide: true });
   let result = '';
   child.stdout.on('data', chunk => result += chunk);
   child.stderr.on('data', chunk => result += chunk);
