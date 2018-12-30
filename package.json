@@ -1,6 +1,6 @@
 {
   "name": "@lpha/core",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "description": "A simple utility for running tasks in JS projects.",
   "main": "./dist/index.js",
   "types": "./dist/index",
@@ -14,7 +14,7 @@
     "lint": "mkdir -p reports && tslint './src/**/*.ts' --project ./ --format json --out './reports/lint.json' || tslint './src/**/*.ts' --project ./ --format stylish",
     "start": "node dist/index.js",
     "test": "jest --config='./jest.config.json' --json --outputFile='./reports/test.json' --testLocationInResults --coverage --detectOpenHandles",
-    "prepare": "yarn clean && yarn build"
+    "prepare": "yarn test && yarn clean && yarn build"
   },
   "bin": {
     "@": "./run.js",

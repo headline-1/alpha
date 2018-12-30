@@ -4,12 +4,18 @@ import { getConfig } from './config';
 import { getCommandsFromModule } from './get-commands';
 import { AlphaError, generateDoc, Logger, parseArgs, writeFile } from './utils';
 
-export const alpha = async () => {
+const TAG = '@lpha';
+
+export const alpha = () => (async () => {
   Logger.add({ log: console.log, useChalk: true });
   const config = await getConfig();
   const commands: AnyCommand<any, any>[] = [];
   for (const commandName of config.commands) {
     await getCommandsFromModule(commandName, commands);
+  }
+  if (!commands.length) {
+    Logger.log(TAG, 'No commands available. You can include commands in commands array in @lpha configuration file.');
+    process.exit(2);
   }
   const commandName = process.argv[2];
   if (!commandName) {
@@ -52,4 +58,11 @@ export const alpha = async () => {
       }
     }
   }
-};
+})()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error('An error occurred while running @lpha.\n', err);
+    process.exit(1);
+  });

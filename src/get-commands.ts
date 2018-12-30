@@ -1,6 +1,9 @@
+import * as path from 'path';
 import { AnyCommand, isCommand } from './command';
 
-export const requireModule = async (location: string) => require(location);
+export const requireModule = async (location: string) => require(
+  location.includes('.') ? path.resolve(location) : location
+);
 
 export const getCommandsFromModule = async (location: string, allCommands: AnyCommand<any, any>[]): Promise<void> => {
   if (allCommands.find(command => command.location === location)) {
@@ -27,7 +30,7 @@ export const getCommandsFromModule = async (location: string, allCommands: AnyCo
     }
   }
 
-  allCommands.concat(commands);
+  allCommands.push(...commands);
 
   for (const command of commands) {
     command.location = location;
