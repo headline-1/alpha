@@ -67,7 +67,6 @@ export const remove = async (path: string) => {
     await Promise.all(
       files.map(file => remove(Path.join(path, file)))
     );
-  } else {
-    await unlink(path);
   }
+  await unlink(path);
 };

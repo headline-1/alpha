@@ -1,3 +1,7 @@
+# 0.3.11
+
+* [FIX] "remove" should remove directories...
+
 # 0.3.10
 
 * [FIX] Input stream redirection for child processes
