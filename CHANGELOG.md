@@ -1,3 +1,9 @@
+# 0.3.10
+
+* [FIX] Input stream redirection for child processes
+* [FIX] Exported `io-ts` types
+* [FIX] Fixed docs generation 
+
 # 0.2.0
 
 * Added logger

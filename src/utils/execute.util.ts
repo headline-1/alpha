@@ -26,6 +26,7 @@ export const exec = (
     child.stdout.on('data', data => Logger.log(tag, data));
     child.stderr.on('data', data => Logger.error(tag, data));
   }
+  process.stdin.pipe(child.stdin);
   child.on('exit', (code, signal) => code === 0
     ? resolve(result.toString())
     : reject(new Error(`${command} exited with code ${code}:${signal}\nLog:\n${result}`))

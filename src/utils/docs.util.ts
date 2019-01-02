@@ -24,10 +24,10 @@ export const generateDoc = <T extends AnyParameters, R>(command: AnyCommand<T, R
       <td>${arg}</td>
       <td>${value.cli || '-'}</td>
       <td>${value.env || '-'}</td>
-      <td>${value.type.name}</td>
+      <td>${value.type.name.replace(/</g, '&lt;')}</td>
       <td>${!value.default && value.required ? 'yes' : 'no'}</td>
       <td><pre>${value.default || '-'}</pre></td>
-      <td>${value.description.replace(/\\n/g, '<br />')}</td>
+      <td>${value.description.replace(/</g, '&lt;').replace(/\\n/g, '<br />')}</td>
     </tr>`).join('')
       }
 </table>`
