@@ -1,9 +1,17 @@
 import { getDefaultContext, TypeOf } from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Input } from './parameters';
+import { RevertStack } from './revert-stack';
+import { Logger } from './utils';
+
+type ParametersObject<Parameters extends AnyParameters> = {
+  [d in keyof Parameters]: TypeOf<Parameters[d]['type']>;
+};
 
 type CommandExec<Parameters extends AnyParameters, Result> = (
-  input: { [d in keyof Parameters]: TypeOf<Parameters[d]['type']> }) => Promise<CommandResult<Result>>;
+  input: ParametersObject<Parameters>,
+  revertStack: RevertStack
+) => Promise<Result>;
 
 export interface Command<Parameters extends AnyParameters, Result> {
   __command: true;
@@ -14,11 +22,6 @@ export interface Command<Parameters extends AnyParameters, Result> {
   parameters: Parameters;
   dependencies: string[];
   exec: CommandExec<Parameters, Result>;
-}
-
-export interface CommandResult<T> {
-  result: T;
-  revert: () => Promise<void>;
 }
 
 export type AnyParameters = Record<string, Input<any>>;
@@ -51,7 +54,7 @@ export class CommandBuilder<Parameters extends AnyParameters = {}, Result = void
     return this as any;
   };
 
-  execute = <ExecResult>(exec: CommandExec<Parameters, ExecResult>): CommandBuilder<Parameters, ExecResult> => {
+  execute = <Result = void>(exec: CommandExec<Parameters, Result>): CommandBuilder<Parameters, Result> => {
     this.command.exec = exec as any;
     return this as any;
   };
@@ -63,6 +66,26 @@ export class CommandBuilder<Parameters extends AnyParameters = {}, Result = void
     if (!this.command.dependencies) {
       this.dependencies([]);
     }
+    if (!this.command.name) {
+      throw new Error('The command does not have a name.');
+    }
+    if (!this.command.exec) {
+      throw new Error(`The command ${this.command.name} does not have an execution function.`);
+    }
+
+    const name = this.command.name;
+    const baseExec = this.command.exec;
+
+    this.command.exec = async (params: Parameters, revertStack: RevertStack) => {
+      try {
+        return await baseExec(params, revertStack);
+      } catch (error) {
+        Logger.error(name, error);
+        await revertStack.revert();
+        throw error;
+      }
+    };
+
     return this.command as any;
   };
 }
@@ -104,7 +127,7 @@ export const runCommand = async <Parameters extends AnyParameters, Result>(
       parameters[key] = validation.value;
     }
   }
-  await command.exec(parameters);
+  await command.exec(parameters, new RevertStack());
 };
 
 export const isCommand = (maybeCommand: any): maybeCommand is AnyCommand<any, any> =>

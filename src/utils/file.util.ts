@@ -30,7 +30,7 @@ export const writeFile = async (file: string, data: any, format = 'utf8') => {
 export const makeDir = mkdir;
 
 export const makeDirs = async (path: string) => {
-  const parts = Path.resolve(path).split(Path.sep);
+  const parts = path.replace(/[\/]/g, '/').split('/');
   for (let p = 0; p < parts.length; p++) {
     const partialPath = Path.join(...parts.slice(0, p + 1));
     if (!await exists(partialPath)) {

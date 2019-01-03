@@ -20,6 +20,7 @@ describe('docs', () => {
         .name('command')
         .description('description')
         .parameters(params)
+        .execute(async () => void 0)
         .build();
 
       const result = await readFile(path.resolve(__dirname, 'docs.spec.mock.complete.md'));
@@ -29,6 +30,7 @@ describe('docs', () => {
     it('generates documentation for an incomplete command', async () => {
       const command = new CommandBuilder()
         .name('command')
+        .execute(async () => void 0)
         .build();
 
       const result = await readFile(path.resolve(__dirname, 'docs.spec.mock.incomplete.md'));

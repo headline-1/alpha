@@ -1,3 +1,15 @@
+# 0.3.14
+
+* [FIX] FS: makeDirs creates correct relative directories
+
+# 0.3.13
+
+* [FIX] Missing RevertStack export
+
+# 0.3.12
+
+* [NEW] RevertStack implementation. Whenever your command fails (by throwing an error), you will be able to revert all reversible things
+
 # 0.3.11
 
 * [FIX] "remove" should remove directories...
