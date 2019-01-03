@@ -225,6 +225,12 @@ mockFsFunction('readdir', true, (path: string): string[] => {
 
 mockFsFunction('exists', true, (path: string) => !!get(fsMock, path));
 
+mockFsFunction('access', true, (path: string) => {
+  if (!get(fsMock, path)) {
+    throw new Error('EACCESS');
+  }
+});
+
 export const FSMock = {
   disable: () => {
     useOriginal = true;

@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { exists, readDir, readFile } from './utils/file.util';
+import { Access, access, readDir, readFile } from './utils/file.util';
 
 export interface Config {
   commands: string[];
@@ -38,7 +38,7 @@ export const readConfigFile = async (file: RegExp | string): Promise<object | un
     }
     file = path.join(directory, fileName);
   }
-  if (!(await exists(file))) {
+  if (!(await access(file, Access.READ))) {
     return undefined;
   }
   switch (path.extname(file)) {

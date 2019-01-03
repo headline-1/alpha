@@ -93,6 +93,14 @@ describe('config', () => {
   });
 
   describe('#getConfig', () => {
+    beforeEach(() => {
+      FSMock.setOverlay(false);
+    });
+
+    afterEach(() => {
+      FSMock.setOverlay(true);
+    });
+
     const testFile = async (fileName: string, customName?: string) => {
       const config = { a: { a: 1 }, commands: ['a'] };
       await writeFile(fileName, JSON.stringify(config));

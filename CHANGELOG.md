@@ -1,3 +1,7 @@
+# 0.3.16
+
+* [FIX] FS: Access instead of exists
+
 # 0.3.14
 
 * [FIX] FS: makeDirs creates correct relative directories
