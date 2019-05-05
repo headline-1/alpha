@@ -1,9 +1,5 @@
-/node_modules/
-/.idea/
-/.vscode/
-/build/
-/dist/
-/src/**/*.js
-/reports/
+/node_modules
+/dist
+/reports
 /.jest
 *.log

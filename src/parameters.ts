@@ -9,8 +9,8 @@ export type Input<A = any, O = any, I = unknown> = {
   required: boolean;
 };
 
-class ParametersBuilder<Parameters extends Record<string, Input> = {}> {
-  constructor(public readonly parameters: Parameters) {
+export class ParametersBuilder<Parameters extends Record<string, Input> = {}> {
+  constructor(public readonly parameters: Parameters = {} as Parameters) {
   }
 
   add<Name extends string, In extends Input>(name: Name, input: In) {
@@ -22,5 +22,3 @@ class ParametersBuilder<Parameters extends Record<string, Input> = {}> {
     return this.parameters;
   }
 }
-
-export const parameters = () => new ParametersBuilder({});
