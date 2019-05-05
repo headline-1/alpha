@@ -1,9 +1,30 @@
 import * as path from 'path';
 import { AnyCommand, isCommand } from './command';
+import { Access, access, readDir } from './utils';
 
-export const requireModule = async (location: string) => require(
-  location.includes('.') ? path.resolve(location) : location
-);
+const validPackageNames = [
+  /^@lpha\/plugin-/,
+  /-alpha-plugin$/,
+];
+export const requireModule = async (location: string) => require(path.resolve(location));
+
+export const findAllCommandModules = async () => {
+  const files = [];
+  let location = process.cwd();
+  let oldLocation = location;
+  do {
+    const nodeModules = path.join(location, 'node_modules');
+    if (await access(nodeModules, Access.EXISTS)) {
+      files.push(
+        ...(await readDir(nodeModules))
+          .filter(file => validPackageNames.some(regexp => regexp.test(file)))
+      );
+    }
+    oldLocation = location;
+    location = path.resolve(location, '..');
+  } while (oldLocation !== location);
+  return [...new Set(files)];
+};
 
 export const getCommandsFromModule = async (location: string, allCommands: AnyCommand<any, any>[]): Promise<void> => {
   if (allCommands.find(command => command.location === location)) {

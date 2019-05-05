@@ -1,9 +1,7 @@
 import * as path from 'path';
-import { Access, access, readDir, readFile } from './utils/file.util';
+import { Access, access, readDir, readFile } from './utils';
 
 export interface Config {
-  commands: string[];
-
   [commandName: string]: Record<string, any>;
 }
 

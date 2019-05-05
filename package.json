@@ -17,9 +17,7 @@
     "prepare": "yarn test && yarn clean && yarn build"
   },
   "bin": {
-    "@": "./run.js",
-    "@lpha": "./run.js",
-    "alpha": "./run.js"
+    "@": "./run.js"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
