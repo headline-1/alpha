@@ -28,7 +28,7 @@ export const alpha = () => (async () => {
       if (process.argv[3] === 'self') {
         const cwd = process.cwd();
         const packageJson = require(path.join(cwd, 'package.json'));
-        await getCommandsFromModule(require(path.join(cwd, packageJson.main)), commands);
+        await getCommandsFromModule(path.join(cwd, packageJson.main), commands);
       }
       for (const command of commands) {
         const doc = generateDoc(command);
