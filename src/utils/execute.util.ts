@@ -20,14 +20,16 @@ export const exec = (
 ): Promise<string> => new Promise<string>((resolve, reject) => {
   const child = processExec(command, { windowsHide: true });
   let result = '';
-  if (!silent) {
-    child.stdout.on('data', data => Logger.log(tag, data));
-    child.stderr.on('data', data => Logger.error(tag, data));
-  } else {
-    child.stdout.on('data', chunk => result += chunk);
-    child.stderr.on('data', chunk => result += chunk);
+  if (child.stdout && child.stderr && child.stdin) {
+    if (!silent) {
+      child.stdout.on('data', data => Logger.log(tag, data));
+      child.stderr.on('data', data => Logger.error(tag, data));
+    } else {
+      child.stdout.on('data', chunk => result += chunk);
+      child.stderr.on('data', chunk => result += chunk);
+    }
+    process.stdin.pipe(child.stdin);
   }
-  process.stdin.pipe(child.stdin);
   child.on('exit', (code, signal) => code === 0
     ? resolve(result.toString())
     : reject(new Error(`${command} exited with code ${code}:${signal}\nLog:\n${result}`))

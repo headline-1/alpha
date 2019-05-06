@@ -13,10 +13,6 @@ export const alpha = () => (async () => {
   for (const moduleName of await findAllCommandModules()) {
     await getCommandsFromModule(moduleName, commands);
   }
-  if (!commands.length) {
-    Logger.log(TAG, 'No commands available. You can include commands in commands array in @lpha configuration file.');
-    process.exit(2);
-  }
   const commandName = process.argv[2];
   if (!commandName) {
     Logger.log(TAG, 'Please specify command to execute. Available commands:\n' + (
@@ -29,6 +25,11 @@ export const alpha = () => (async () => {
 
   switch (commandName) {
     case 'docs': {
+      if (process.argv[3] === 'self') {
+        const cwd = process.cwd();
+        const packageJson = require(path.join(cwd, 'package.json'));
+        await getCommandsFromModule(require(path.join(cwd, packageJson.main)), commands);
+      }
       for (const command of commands) {
         const doc = generateDoc(command);
         await writeFile(path.join('./docs/commands', command.name + '.md'), doc);
