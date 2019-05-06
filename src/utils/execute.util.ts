@@ -20,11 +20,12 @@ export const exec = (
 ): Promise<string> => new Promise<string>((resolve, reject) => {
   const child = processExec(command, { windowsHide: true });
   let result = '';
-  child.stdout.on('data', chunk => result += chunk);
-  child.stderr.on('data', chunk => result += chunk);
   if (!silent) {
     child.stdout.on('data', data => Logger.log(tag, data));
     child.stderr.on('data', data => Logger.error(tag, data));
+  } else {
+    child.stdout.on('data', chunk => result += chunk);
+    child.stderr.on('data', chunk => result += chunk);
   }
   process.stdin.pipe(child.stdin);
   child.on('exit', (code, signal) => code === 0

@@ -6,7 +6,6 @@ const validPackageNames = [
   /^@lpha\/plugin-/,
   /-alpha-plugin$/,
 ];
-export const requireModule = async (location: string) => require(path.resolve(location));
 
 export const findAllCommandModules = async () => {
   const files = [];
@@ -18,6 +17,7 @@ export const findAllCommandModules = async () => {
       files.push(
         ...(await readDir(nodeModules))
           .filter(file => validPackageNames.some(regexp => regexp.test(file)))
+          .map(file => path.resolve(nodeModules, file))
       );
     }
     oldLocation = location;
@@ -30,7 +30,7 @@ export const getCommandsFromModule = async (location: string, allCommands: AnyCo
   if (allCommands.find(command => command.location === location)) {
     return;
   }
-  const commandModule = await requireModule(location);
+  const commandModule = await import(location);
   if (isCommand(commandModule)) {
     commandModule.location = location;
     allCommands.push(commandModule);

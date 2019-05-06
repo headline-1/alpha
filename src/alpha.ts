@@ -21,8 +21,8 @@ export const alpha = () => (async () => {
   if (!commandName) {
     Logger.log(TAG, 'Please specify command to execute. Available commands:\n' + (
       commands.length
-      ? commands.map(cmd => cmd.name).join(', ')
-      : 'No commands available. Command modules with "-alpha-plugin" name suffix are automatically imported.'
+        ? commands.map(cmd => cmd.name).join(', ')
+        : 'No commands available. Command modules with "-alpha-plugin" name suffix are automatically imported.'
     ));
     process.exit(1);
   }
@@ -53,7 +53,11 @@ export const alpha = () => (async () => {
         });
       } catch (error) {
         if (error instanceof AlphaError) {
-          Logger.error(error.command, error.message, error.details);
+          if (error.details) {
+            Logger.error(error.command, error.message, error.details);
+          } else {
+            Logger.error(error.command, error.message);
+          }
           process.exit(1);
         } else {
           throw error;
@@ -63,9 +67,6 @@ export const alpha = () => (async () => {
     }
   }
 })()
-  .then(() => {
-    process.exit(0);
-  })
   .catch((err) => {
     console.error('An error occurred while running @lpha.\n', err);
     process.exit(1);

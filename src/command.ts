@@ -1,8 +1,9 @@
+import chalk from 'chalk';
 import { getDefaultContext, TypeOf } from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Input } from './parameters';
 import { RevertStack } from './revert-stack';
-import { Logger } from './utils';
+import { AlphaError, Logger } from './utils';
 
 type ParametersObject<Parameters extends AnyParameters> = {
   [d in keyof Parameters]: TypeOf<Parameters[d]['type']>;
@@ -112,12 +113,13 @@ export const runCommand = async <Parameters extends AnyParameters, Result>(
       || (parameter.env && environment[parameter.env])
       || parameter.default;
     if (parameter.required && !value) {
-      throw new Error((
-        `${command.name}: Required parameter '${key}' is missing. Expected ${parameter.type.name}.\n` +
+      throw new AlphaError(command.name, chalk.red((
+        `${chalk.bold(command.name)}: Required parameter '${chalk.bold(key)}' is missing. ` +
+        `Expected ${parameter.type.name}.\n` +
         `It can be set in configuration as "${key}"\n` +
         (parameter.cli ? `It can be passed as CLI argument as "${parameter.cli}"\n` : '') +
         (parameter.env ? `It can be specified as an environmental variable "${parameter.env}"\n` : '')
-      ).trim());
+      ).trim()));
     }
     if (value) {
       const validation = parameter.type.validate(value, getDefaultContext(parameter.type));
