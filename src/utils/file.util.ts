@@ -37,29 +37,22 @@ export const writeFile = async (file: string, data: any, format = 'utf8') => {
   }
 };
 
-export const makeDir = (path: string, mode: string = '777') => mkdir(path, mode);
+export const makeDir = (path: string, mode: number = 0o777) => mkdir(path, {
+  recursive: true,
+  mode,
+});
 
-export const makeDirs = async (path: string, mode: string = '777') => {
-  const parts = path.replace(/[\/]/g, '/').split('/');
-  for (let p = 0; p < parts.length; p++) {
-    const partialPath = Path.join(...parts.slice(0, p + 1));
-    if (!await access(partialPath, Access.EXISTS)) {
-      await mkdir(partialPath, mode);
-    }
-  }
-};
-
-export const copyFilesInternal = async (source: string, destination: string, inside = false): Promise<void> => {
+export const copyFilesInternal = async (source: string, destination: string): Promise<void> => {
   if (!await access(source, Access.READ)) {
     throw new Error(`${source} does not exist and cannot be copied to ${destination}.`);
   }
   if ((await stat(source)).isDirectory()) {
     if (!await access(destination, Access.WRITE)) {
-      await inside ? makeDir(destination) : makeDirs(destination);
+      await makeDir(destination);
     }
     const files = await readDir(source);
     await Promise.all(
-      files.map(file => copyFilesInternal(Path.join(source, file), Path.join(destination, file), true))
+      files.map(file => copyFilesInternal(Path.join(source, file), Path.join(destination, file)))
     );
   } else {
     await copyFile(source, destination);
