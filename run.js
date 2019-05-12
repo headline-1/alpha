@@ -1,3 +1,5 @@
 #! /usr/bin/env node
 const { alpha } = require('./dist/index');
-alpha();
+alpha().then(() => {
+  process.exit(0);
+});
