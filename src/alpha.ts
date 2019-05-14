@@ -13,11 +13,29 @@ export const alpha = () => (async () => {
   for (const moduleName of await findAllCommandModules()) {
     await getCommandsFromModule(moduleName, commands);
   }
-  const commandName = process.argv[2];
+  const args = process.argv.slice(2);
+  const self = args[0].match(/^self(?::(.+))?$/);
+  const commandName = args[self ? 1 : 0];
+
+  if (self) {
+    const cwd = process.cwd();
+    const filePath = self[1]
+      ? path.isAbsolute(self[1]) ? self[1] : path.join(cwd, self[1])
+      : path.join(cwd, (await import(path.join(cwd, 'package.json'))).main);
+    try {
+      await getCommandsFromModule(filePath, commands);
+    } catch (err) {
+      throw new AlphaError('@lpha', `Could not correctly import ${filePath}`, {
+        name: err.name,
+        message: err.message,
+      });
+    }
+  }
+
   if (!commandName) {
-    Logger.log(TAG, 'Please specify command to execute. Available commands:\n' + (
+    Logger.log(TAG, 'Please specify a command to execute. ' + (
       commands.length
-        ? commands.map(cmd => cmd.name).join(', ')
+        ? `Available commands:\n${commands.map(cmd => cmd.name).join(', ')}`
         : 'No commands available. Command modules with "-alpha-plugin" name suffix are automatically imported.'
     ));
     process.exit(1);
@@ -25,11 +43,6 @@ export const alpha = () => (async () => {
 
   switch (commandName) {
     case 'docs': {
-      if (process.argv[3] === 'self') {
-        const cwd = process.cwd();
-        const packageJson = require(path.join(cwd, 'package.json'));
-        await getCommandsFromModule(path.join(cwd, packageJson.main), commands);
-      }
       for (const command of commands) {
         const doc = generateDoc(command);
         await writeFile(path.join('./docs/commands', command.name + '.md'), doc);
@@ -49,7 +62,7 @@ export const alpha = () => (async () => {
       try {
         return await runCommand(command, {
           configuration: config[command.name] || {},
-          cliArguments: parseArgs(process.argv),
+          cliArguments: parseArgs(args),
           environment: process.env,
         });
       } catch (error) {

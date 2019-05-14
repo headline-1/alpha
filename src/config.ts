@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { Access, access, readDir, readFile } from './utils';
+import { Access, access, Logger, readDir, readFile } from './utils';
 
 export interface Config {
   [commandName: string]: Record<string, any>;
@@ -65,5 +65,6 @@ export const getConfig = async (configLocation?: string): Promise<Config> => {
       return config;
     }
   }
-  throw new Error('@lpha configuration wasn\'t found in current project.');
+  Logger.warn('Config', '@lpha configuration wasn\'t found in current project.');
+  return {};
 };
