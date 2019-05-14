@@ -1,10 +1,20 @@
+import chalk from 'chalk';
 import * as path from 'path';
-import { AnyCommand, runCommand } from './command';
+import { AnyCommand, Command, runCommand } from './command';
 import { getConfig } from './config';
 import { findAllCommandModules, getCommandsFromModule } from './get-commands';
 import { AlphaError, generateDoc, Logger, parseArgs, writeFile } from './utils';
 
 const TAG = '@lpha';
+
+const listCommands = (commands: Command<any, any>[]) => commands.length
+  ? `Available commands:\n${[
+    { name: 'docs', description: 'Generate documentation for available commands' },
+    ...commands,
+  ].map(
+    cmd => '→ ' + chalk.bold.magenta(cmd.name) + ' ' + chalk.grey(cmd.description)
+  ).join('\n')}`
+  : 'No commands available. Command modules with "-alpha-plugin" name suffix are automatically imported.';
 
 export const alpha = () => (async () => {
   Logger.add({ log: console.log, useChalk: true });
@@ -33,11 +43,7 @@ export const alpha = () => (async () => {
   }
 
   if (!commandName) {
-    Logger.log(TAG, 'Please specify a command to execute. ' + (
-      commands.length
-        ? `Available commands:\n${commands.map(cmd => cmd.name).join(', ')}`
-        : 'No commands available. Command modules with "-alpha-plugin" name suffix are automatically imported.'
-    ));
+    Logger.log(TAG, 'Please specify a command to execute. ' + listCommands(commands));
     process.exit(1);
   }
 
@@ -54,7 +60,7 @@ export const alpha = () => (async () => {
       if (!command) {
         Logger.log(
           TAG,
-          'Command unsupported or not registered, please use one of: ' + commands.map(cmd => cmd.name).join(', ')
+          'Command unsupported or not registered. ' + listCommands(commands)
         );
         process.exit(1);
         return;

@@ -22,6 +22,9 @@ yarn add @lpha/core -D
 
 To use an external plugin, install it using yarn or npm. Plugins should have `-alpha-plugin` package name suffix and they are detected automatically. Follow below syntax to run commands.
 ```bash
+# if you installed @lpha globally, you can launch "@" directly:
+@ [command-name] [--command-option=...]
+# or if you installed locally use npm or yarn:
 yarn @ [command-name] [--command-option=...]
 ```
 
@@ -81,6 +84,7 @@ export default [
 - `access`
 - `rename`
 
+Documentation of all available commands can be generated automatically to `./docs/commands/` directory after running `@ docs` or `@ self docs`.
 Remember to define the `"main"` field in your `package.json`, so that *@lpha* could pick it up. To run such defined commands, run `@ self exported-command-name`.
 
 If you'd like to run custom, per-project commands defined i.e. in `./commands/index.js` run `@ self:commands exported-command-name`.

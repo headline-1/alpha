@@ -123,11 +123,10 @@ describe('config', () => {
       );
     });
 
-    it('throws error when config is not found in in "package.json:@"', async () => {
+    it('returns a default config when it is not found in in "package.json:@"', async () => {
       await writeFile('package.json', '{}');
-      await expect(getConfig()).rejects.toEqual(
-        new Error('@lpha configuration wasn\'t found in current project.')
-      );
+
+      expect(await getConfig()).toEqual({});
     });
 
     it('returns config stored in "package.json:@"', async () => {
