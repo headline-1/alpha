@@ -19,7 +19,6 @@ export const alpha = () => (async () => {
   const config = await getConfig();
   const commands: AnyCommand<any, any>[] = [];
   for (const moduleName of await findAllCommandModules()) {
-    console.log(moduleName);
     await getCommandsFromModule(moduleName, commands);
   }
   const args = process.argv.slice(2);
