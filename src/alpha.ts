@@ -7,24 +7,23 @@ import { AlphaError, generateDoc, Logger, parseArgs, writeFile } from './utils';
 
 const TAG = '@lpha';
 
-const listCommands = (commands: Command<any, any>[]) => commands.length
-  ? `Available commands:\n${[
-    { name: 'docs', description: 'Generate documentation for available commands' },
-    ...commands,
-  ].map(
-    cmd => '→ ' + chalk.bold.magenta(cmd.name) + ' ' + chalk.grey(cmd.description)
-  ).join('\n')}`
-  : 'No commands available. Command modules with "-alpha-plugin" name suffix are automatically imported.';
+const listCommands = (commands: Command<any, any>[]) => `Available commands:\n${[
+  { name: 'docs', description: 'Generate documentation for available commands' },
+  ...commands,
+].map(
+  cmd => '→ ' + chalk.bold.magenta(cmd.name) + ' ' + chalk.grey(cmd.description)
+).join('\n')}\nCommand modules with "-alpha-plugin" name suffix are automatically imported.`;
 
 export const alpha = () => (async () => {
   Logger.add({ log: console.log, useChalk: true });
   const config = await getConfig();
   const commands: AnyCommand<any, any>[] = [];
   for (const moduleName of await findAllCommandModules()) {
+    console.log(moduleName);
     await getCommandsFromModule(moduleName, commands);
   }
   const args = process.argv.slice(2);
-  const self = args[0].match(/^self(?::(.+))?$/);
+  const self = args.length > 0 ? args[0].match(/^self(?::(.+))?$/) : null;
   const commandName = args[self ? 1 : 0];
 
   if (self) {

@@ -14,9 +14,21 @@ export const findAllCommandModules = async () => {
   do {
     const nodeModules = path.join(location, 'node_modules');
     if (await access(nodeModules, Access.EXISTS)) {
+      const fileNames = await readDir(nodeModules);
+      const internalFileNames: string[] = [];
+      for (const name of fileNames) {
+        if (name.startsWith('@')) {
+          internalFileNames.push(
+            ...(await readDir(path.join(nodeModules, name))).map(internalName => name + '/' + internalName)
+          );
+        }
+      }
+
       files.push(
-        ...(await readDir(nodeModules))
-          .filter(file => validPackageNames.some(regexp => regexp.test(file)))
+        ...[...fileNames, ...internalFileNames]
+          .filter((file) => {
+            return validPackageNames.some(regexp => !!file.match(regexp));
+          })
           .map(file => path.resolve(nodeModules, file))
       );
     }
